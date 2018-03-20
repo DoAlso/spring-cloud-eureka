@@ -1,0 +1,19 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: users
+  datasource:
+    url: jdbc:mysql:///scs_base?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: qwe12356
+    driver-class-name: com.mysql.cj.jdbc.Driver
+eureka:
+  instance:
+    prefer-ip-address: true
+    app-group-name: micro-eureka
+    hostname: ${spring.cloud.client.hostname}
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${spring.application.instance_id:${server.port}}
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761}/eureka/
