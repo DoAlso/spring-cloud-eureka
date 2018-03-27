@@ -3,7 +3,9 @@ package com.eureka.gateway.consumer;
 import com.eurake.common.vo.CurrentUser;
 import com.eureka.common.constant.Constant;
 import com.eureka.common.model.BackEntity;
+import com.eureka.common.model.BaseParam;
 import com.eureka.common.utils.BackEntityUtil;
+import com.eureka.common.utils.FastJsonUtil;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CacheClient {
-    @Autowired(required = false)
+
+    @Autowired
     private RestTemplate restTemplate;
 
     /**
@@ -21,7 +24,10 @@ public class CacheClient {
      */
     @HystrixCommand(fallbackMethod = "getCurrentUserFallBack")
     public BackEntity getCurrentUser(String key){
-        BackEntity backEntity = restTemplate.postForObject("http://storage/getCurrentUser",key,BackEntity.class);
+        BaseParam<String> baseParam = new BaseParam<>();
+        baseParam.setParams(key);
+        String result = restTemplate.postForEntity("http://cache/getCurrentUser",baseParam,String.class).getBody();
+        BackEntity backEntity = FastJsonUtil.toBean(result,BackEntity.class);
         return backEntity;
     }
 
@@ -31,10 +37,7 @@ public class CacheClient {
      * @return
      */
     public BackEntity getCurrentUserFallBack(String key){
-        CurrentUser user = new CurrentUser();
-        user.setToken("1_dfg784kjs455kfg9454kjfg");
-        user.setAccount("admin");
-        return BackEntityUtil.getReponseResult(user, Constant.ResponseMSG.REQUEST_ERROR,Constant.ResponseCode.SYSTEM_BUSY);
+        return BackEntityUtil.getReponseResult(null, Constant.ResponseMSG.REQUEST_ERROR,Constant.ResponseCode.SYSTEM_BUSY);
     }
 
     /**
@@ -45,7 +48,7 @@ public class CacheClient {
      */
     @HystrixCommand(fallbackMethod = "getAuthInfoFallBack")
     public BackEntity getAuthInfo(String key){
-        BackEntity backEntity = restTemplate.postForObject("http://storage/getAuthInfo",key,BackEntity.class);
+        BackEntity backEntity = restTemplate.postForObject("http://cache/getAuthInfo",key,BackEntity.class);
         return backEntity;
     }
 

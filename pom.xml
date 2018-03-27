@@ -24,6 +24,7 @@
         <module>eureka-gateway</module>
         <module>eureka-users</module>
         <module>eureka-cache</module>
+        <module>eureka-netty</module>
     </modules>
 
 	<properties>

@@ -23,24 +23,14 @@ public class UserController {
     private UserFacade userFacade;
 
     @PostMapping("/register")
-    public BackEntity register(@RequestBody BaseParam<String> baseParam) {
+    public BackEntity register(@RequestBody BaseParam<String> baseParam) throws Exception{
         LogUtil.info(logger,"request params is:{}", FastJsonUtil.toJSONString(baseParam));
-        try{
-            return userFacade.register(baseParam.getParams());
-        }catch (Exception e){
-            LogUtil.error(logger,"register error:{}",e.getMessage());
-            return BackEntityUtil.getReponseResult(null, e.getMessage(), Constant.ResponseCode.SYSTEM_BUSY);
-        }
+        return userFacade.register(baseParam.getParams());
     }
 
     @PostMapping("/login")
-    public BackEntity login(@RequestBody BaseParam<LoginParam> baseParam){
+    public BackEntity login(@RequestBody BaseParam<LoginParam> baseParam) throws Exception{
         LogUtil.info(logger,"request params is:{}", FastJsonUtil.toJSONString(baseParam));
-        try{
-            return userFacade.login(baseParam.getParams());
-        }catch(Exception e){
-            LogUtil.error(logger,"register error:{}",e.getMessage());
-            return BackEntityUtil.getReponseResult(null, e.getMessage(), Constant.ResponseCode.SYSTEM_BUSY);
-        }
+        return userFacade.login(baseParam.getParams());
     }
 }

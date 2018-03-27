@@ -1,6 +1,7 @@
 package com.eureka.users.exception;
 
 import com.eureka.common.model.BackEntity;
+import com.eureka.common.utils.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	ResponseEntity<?> handleControllerException(HttpServletRequest request, Throwable ex) {
+		LogUtil.error(logger,"exception error:{}",ex.getMessage());
 		HttpStatus status = getStatus(request);
 		BackEntity<?> entity = new BackEntity<>();
 		entity.setResMsg(ex.getMessage());
@@ -30,7 +34,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(CustomException.class)
 	@ResponseBody
 	ResponseEntity<?> handleControllerCustomException(HttpServletRequest request, Throwable ex) {
-		logger.info("[ServiceBase-handleControllerCustomException:throw success]");
+		LogUtil.error(logger,"exception error:{}",ex.getMessage());
 		HttpStatus status = getStatus(request);
 		BackEntity<?> entity = new BackEntity<>();
 		entity.setResMsg(ex.getMessage());

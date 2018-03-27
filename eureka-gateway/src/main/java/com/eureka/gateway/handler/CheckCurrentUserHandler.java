@@ -1,6 +1,7 @@
 package com.eureka.gateway.handler;
 
 import com.eurake.common.vo.CurrentUser;
+import com.eureka.common.utils.FastJsonUtil;
 import com.eureka.gateway.consumer.CacheClient;
 import com.eureka.gateway.filter.TokenFilter;
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +38,8 @@ public class CheckCurrentUserHandler implements InitializingBean {
         if(param.length != tokenLength){
             return null;
         }
-        CurrentUser currentUser = (CurrentUser)cacheClient.getCurrentUser(param[0]).getResData();
+        Object resData = cacheClient.getCurrentUser(param[0]).getResData();
+        CurrentUser currentUser = FastJsonUtil.toBean(FastJsonUtil.toJSONString(resData),CurrentUser.class);
         if(currentUser == null || !xToken.equals(currentUser.getToken())){
             return null;
         }
