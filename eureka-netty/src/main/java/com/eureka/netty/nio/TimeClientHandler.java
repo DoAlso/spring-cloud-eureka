@@ -5,9 +5,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -24,6 +22,7 @@ public class TimeClientHandler implements Runnable {
         try {
             selector = Selector.open();
             socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(false);
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -46,7 +45,7 @@ public class TimeClientHandler implements Runnable {
                 if(iterator.hasNext()){
                     key = iterator.next();
                     iterator.remove();
-
+                    handlerInput(key);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -55,38 +54,52 @@ public class TimeClientHandler implements Runnable {
     }
 
     private void handlerInput(SelectionKey key) throws IOException{
-        if(key.isValid()){
-            if(key.isAcceptable()){
-                ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
-                SocketChannel sc = ssc.accept();
-                sc.configureBlocking(false);
-                sc.register(selector,SelectionKey.OP_ACCEPT);
-            }
-            if(key.isReadable()){
-                SocketChannel socketChannel = (SocketChannel) key.channel();
-                ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-                int readBytes = socketChannel.write(readBuffer);
-                if(readBytes > 0){
-                    readBuffer.flip();
-                    byte[] bytes = new byte[readBuffer.remaining()];
-                    readBuffer.get(bytes);
-                    String body = new String(bytes,"UTF-8");
-                    System.out.println("The time server receive order :"+body);
-                    String currentTime = "QUERY TIME ORDER".equalsIgnoreCase(body)?new Date(System.currentTimeMillis()).toString():"BAD ORDER";
-                    //doWirte(socketChannel,currentTime);
-                }else if(readBytes < 0){
-                    key.cancel();
-                    socketChannel.close();
-                }
-            }
-        }
+      if(key.isValid()){
+          SocketChannel sc = (SocketChannel) key.channel();
+          if(key.isConnectable()) {
+              if (sc.finishConnect()) {
+                  sc.register(selector, SelectionKey.OP_READ);
+                  doWrite(sc);
+              } else {
+                  System.exit(1);
+              }
+          }
+          if(key.isReadable()){
+              ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+              int readBytes = sc.read(readBuffer);
+              if(readBytes > 0){
+                  readBuffer.flip();
+                  byte[] bytes = new byte[readBuffer.remaining()];
+                  String body = new String(bytes,"UTF-8");
+                  System.out.println("Now is :"+body);
+                  this.stop = true;
+              }else if(readBytes < 0){
+                  key.cancel();
+                  sc.close();
+              }else {
+
+              }
+          }
+      }
     }
 
     private void doConnect() throws IOException {
         if(socketChannel.connect(new InetSocketAddress(ip,port))){
             socketChannel.register(selector, SelectionKey.OP_READ);
+            doWrite(socketChannel);
         }else{
             socketChannel.register(selector,SelectionKey.OP_CONNECT);
+        }
+    }
+
+    private void doWrite(SocketChannel sc) throws IOException {
+        byte[] bytes = "QUERY TIME ORDER".getBytes();
+        ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
+        writeBuffer.put(bytes);
+        writeBuffer.flip();
+        sc.write(writeBuffer);
+        if(writeBuffer.hasRemaining()){
+            System.out.println("dsfcdsafdasga");
         }
     }
 }
