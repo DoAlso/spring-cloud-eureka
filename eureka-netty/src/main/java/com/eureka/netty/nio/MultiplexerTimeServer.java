@@ -33,7 +33,7 @@ public class MultiplexerTimeServer implements Runnable {
             serverSocketChannel.socket().bind(new InetSocketAddress(port),1024);
             //将通道注册到多路复用器上，进行监听
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-            System.out.println("The time server is start in port : "+port);
+            System.out.println("The time core is start in port : "+port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,7 +99,7 @@ public class MultiplexerTimeServer implements Runnable {
                     byte[] bytes = new byte[readBuffer.remaining()];
                     readBuffer.get(bytes);
                     String body = new String(bytes,"UTF-8");
-                    System.out.println("The time server receive order :"+body);
+                    System.out.println("The time core receive order :"+body);
                     String currentTime = "QUERY TIME ORDER".equalsIgnoreCase(body)?new Date(System.currentTimeMillis()).toString():"BAD ORDER";
                     doWirte(socketChannel,currentTime);
                 }else if(readBytes < 0){
