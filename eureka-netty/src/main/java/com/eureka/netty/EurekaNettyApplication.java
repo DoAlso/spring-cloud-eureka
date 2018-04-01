@@ -20,7 +20,7 @@ public class EurekaNettyApplication implements CommandLineRunner{
     }
 
     @Override
-    public void run(String... args) {
-        nettyServer.start();
+    public void run(String... args) throws Exception{
+        nettyServer.bind();
     }
 }

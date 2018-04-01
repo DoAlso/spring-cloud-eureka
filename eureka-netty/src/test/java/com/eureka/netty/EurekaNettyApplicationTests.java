@@ -22,30 +22,4 @@ public class EurekaNettyApplicationTests {
     public void contextLoads() {
     }
 
-    @Test
-    public void timeClientTest(){
-        connect(10220,"127.0.0.1");
-    }
-
-    private void connect(int port,String host){
-        EventLoopGroup group = new NioEventLoopGroup();
-        try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(group).channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY,true)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel socketChannel) {
-                            socketChannel.pipeline().addLast(new TimeClientHandler());
-                        }
-                    });
-            ChannelFuture future = bootstrap.bind(port).sync();
-            //等待服务端监听端口关闭
-            //future.channel().closeFuture().sync();
-        }catch (InterruptedException e){
-
-        } finally {
-            group.shutdownGracefully();
-        }
-    }
 }
