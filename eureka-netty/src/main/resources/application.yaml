@@ -13,6 +13,5 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761}/eureka/
 netty:
-  server:
-    class-name: com.eureka.netty.handler.TimeServerHandler
+  port: 9999
 
