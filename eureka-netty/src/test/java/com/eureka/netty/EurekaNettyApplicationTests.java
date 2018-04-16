@@ -11,6 +11,7 @@ public class EurekaNettyApplicationTests {
 
     @Test
     public void contextLoads() {
+
     }
 
 }

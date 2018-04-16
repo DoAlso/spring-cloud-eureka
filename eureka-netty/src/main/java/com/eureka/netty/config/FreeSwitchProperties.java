@@ -1,5 +1,6 @@
 package com.eureka.netty.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,6 +12,9 @@ public class FreeSwitchProperties {
     private String password;
     private int timeoutSec;
     public int getPort() {
+        if(port == 0){
+            port = 8021;
+        }
         return port;
     }
 
@@ -27,6 +31,9 @@ public class FreeSwitchProperties {
     }
 
     public String getPassword() {
+        if(StringUtils.isBlank(password)){
+            password = "ClueCon";
+        }
         return password;
     }
 
