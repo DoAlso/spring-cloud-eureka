@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: netty
+  rabbitmq:
+    host: 49.4.65.228
+    template:
+      exchange: spring-boot
+      routing-key: spring-boot-interface
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -17,5 +23,6 @@ netty:
 freeswitch:
   host: 192.168.1.189
   timeout-sec: 10
+
 
 
