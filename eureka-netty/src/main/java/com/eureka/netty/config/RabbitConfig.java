@@ -10,7 +10,7 @@ public class RabbitConfig {
 
     @Bean
     public Queue queue() {
-        return new Queue("hello");
+        return new Queue("ajax");
     }
 
     @Bean
@@ -20,7 +20,7 @@ public class RabbitConfig {
 
     @Bean
     Binding binding(Queue queue,DirectExchange exchange){
-        return BindingBuilder.bind(queue).to(exchange).with("spring-boot-interface");
+        return BindingBuilder.bind(queue).to(exchange).with("ajax-key");
     }
 
 }
