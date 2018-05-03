@@ -18,6 +18,7 @@ netty:
 freeswitch:
   host: 192.168.1.189
   timeout-sec: 10
+  port: 8021
 
 
 
